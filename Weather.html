@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="../Scripts/jquery-1.10.2.js"></script>
+    <script src="../Scripts/bootstrap.js"></script>
+    <script src="../Scripts/respond.js"></script>
+    <link href="../Content/bootstrap.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+    <body ng-app="apiApp">
+      
+        <div class="container" ng-controller="weatherController">
+            <h2> Weather </h2>
+            
+            <input type="text" ng-model="city"/>
+            <input type="button" class="btn btn-default" value="Search" ng-click="Init()"/>
+            <br/><br/>
+            <div ng-show="ViewData == 0">
+                <table class="table table-bordered table-condensed table-hover">
+                    <tr>
+                        <td>Id</td>
+                        <td>Name</td>
+                        <td>Country</td>
+                        <td>Wind Speed</td>
+                        <td>Main</td>
+                        <td>Description</td>
+                        <td>Temp</td>
+                    </tr>
+                    <tr>
+                        <td>{{WeatherResult.id}}</td>
+                        <td>{{WeatherResult.name}}</td>
+                        <td>{{WeatherResult.sys.country}}</td>
+                        <td>{{WeatherResult.wind.speed}}</td>
+                        <td>{{WeatherResult.weather.main}}</td>
+                        <td>{{WeatherResult.weather.description}}</td>
+                        <td>{{WeatherResult.main.temp}}</td>
+                    </tr>
+                </table>
+            </div>
+            
+        </div>
+        <script>
+            var app = angular.module('apiApp', []);
+
+            app.controller('weatherController', function ($scope, $http) {
+
+                //$scope.city = {};
+
+                $scope.WeatherResult = {};
+
+                $scope.Init = function() {
+                    $scope.LoadWeather();
+                };
+
+                $scope.LoadWeather = function () {
+                    
+                    $http({
+                        method: "GET",
+                        params: { q: $scope.city, appid: "ca2672ce261779c27a62e77712d55c81" },
+                        url: "http://cors-anywhere.herokuapp.com/api.openweathermap.org/data/2.5/weather"
+                    }).then(
+
+                        function mySuccess(response) {
+                            //alert('Success');
+                            $scope.ViewData = 0;
+                            console.log(response.data);
+                            $scope.WeatherResult = response.data;
+                        },
+
+                        function myError(response) {
+                            alert('Something went wrong');
+                            console.log(response.data);
+                            $scope.myWelcome = response.statusText;
+                        });
+
+                   
+                };
+            });
+        </script>
+    </body>
+</html>
